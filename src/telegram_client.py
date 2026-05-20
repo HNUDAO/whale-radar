@@ -38,17 +38,22 @@ def send_message(text: str):
 
 
 def send_startup():
+    dry_tag = "  [测试模式]" if config.DRY_RUN else ""
     send_message(
-        f"⚡ <b>Whale Radar</b> started\n"
-        f"Chain: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
-        f"Explorer: {config.EXPLORER_BASE}\n"
-        f"DRY_RUN: {config.DRY_RUN}"
+        f"🚀 <b>巨鲸雷达 Whale Radar</b>{dry_tag}\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"📡 链: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
+        f"🔍 浏览器: {config.EXPLORER_BASE}\n"
+        f"⏱️ 轮询间隔: {config.POLL_INTERVAL}s\n"
+        f"💰 原生币阈值: {config.NATIVE_THRESHOLD} {config.NATIVE_SYMBOL}\n"
+        f"🪙 代币阈值: {config.ERC20_THRESHOLD}"
     )
 
 
 def send_test():
     send_message(
-        f"🔧 <b>Whale Radar</b> test message\n"
-        f"Chain: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
-        f"Explorer: {config.EXPLORER_BASE}"
+        f"🔧 <b>巨鲸雷达 连通测试</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"📡 链: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
+        f"✅ Telegram 连通正常"
     )

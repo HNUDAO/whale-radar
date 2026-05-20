@@ -114,6 +114,14 @@ def _addr_label(address: str, exchanges: dict[str, dict]) -> str:
     return f"<code>{address[:8]}...{address[-6:]}</code>"
 
 
+def _format_value(value: float) -> str:
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.2f}M"
+    if value >= 1_000:
+        return f"{value / 1_000:.2f}K"
+    return f"{value:.4f}"
+
+
 def _get_erc20_threshold(tx: dict, token_thresholds: dict[str, float]) -> float:
     symbol = tx.get("tokenSymbol", "").upper()
     if symbol in token_thresholds:
@@ -135,12 +143,13 @@ def check_native_transfer(
     from_addr = tx.get("from", "???")
     to_addr = tx.get("to", "???")
     msg = (
-        f"\U0001f4b8 <b>Native Transfer</b>\n"
-        f"Whale: <code>{_esc(whale_label)}</code>\n"
-        f"Value: {value_native:.4f} {_esc(config.NATIVE_SYMBOL)}\n"
-        f"From: {_addr_label(from_addr, exchanges)}\n"
-        f"To: {_addr_label(to_addr, exchanges)}\n"
-        f"TX: {_tx_link(tx_hash)}"
+        f"💸 <b>大额原生币转账</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🐋 巨鲸: <code>{_esc(whale_label)}</code>\n"
+        f"💰 金额: <b>{_format_value(value_native)} {_esc(config.NATIVE_SYMBOL)}</b>\n"
+        f"📤 发送: {_addr_label(from_addr, exchanges)}\n"
+        f"📥 接收: {_addr_label(to_addr, exchanges)}\n"
+        f"🔗 交易: {_tx_link(tx_hash)}"
     )
     return msg, native_tx_key(tx)
 
@@ -160,12 +169,13 @@ def check_erc20_transfer(
     from_addr = tx.get("from", "???")
     to_addr = tx.get("to", "???")
     msg = (
-        f"\U0001f4b0 <b>ERC20 Transfer</b>\n"
-        f"Whale: <code>{_esc(whale_label)}</code>\n"
-        f"Value: {value:.4f} {_esc(token_symbol)}\n"
-        f"From: {_addr_label(from_addr, exchanges)}\n"
-        f"To: {_addr_label(to_addr, exchanges)}\n"
-        f"TX: {_tx_link(tx_hash)}"
+        f"🪙 <b>大额代币转账</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🐋 巨鲸: <code>{_esc(whale_label)}</code>\n"
+        f"💰 金额: <b>{_format_value(value)} {_esc(token_symbol)}</b>\n"
+        f"📤 发送: {_addr_label(from_addr, exchanges)}\n"
+        f"📥 接收: {_addr_label(to_addr, exchanges)}\n"
+        f"🔗 交易: {_tx_link(tx_hash)}"
     )
     return msg, erc20_tx_key(tx)
 
@@ -180,13 +190,14 @@ def check_defi_interaction(
     tx_hash = tx.get("hash", "")
     value_native = int(tx.get("value", "0")) / (10 ** config.NATIVE_DECIMALS)
     msg = (
-        f"\U0001f527 <b>DeFi Interaction</b>\n"
-        f"Whale: <code>{_esc(whale_label)}</code>\n"
-        f"Protocol: {_esc(contract_info.get('name', 'Unknown'))} "
-        f"({_esc(contract_info.get('type', ''))})\n"
-        f"To: <code>{_esc(tx.get('to', '???'))}</code>\n"
-        f"Value: {value_native:.4f} {_esc(config.NATIVE_SYMBOL)}\n"
-        f"TX: {_tx_link(tx_hash)}"
+        f"⚙️ <b>DeFi 合约交互</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🐋 巨鲸: <code>{_esc(whale_label)}</code>\n"
+        f"📋 协议: <b>{_esc(contract_info.get('name', '未知'))}</b>"
+        f" ({_esc(contract_info.get('type', ''))})\n"
+        f"🎯 合约: <code>{_esc(tx.get('to', '???'))}</code>\n"
+        f"💰 金额: {_format_value(value_native)} {_esc(config.NATIVE_SYMBOL)}\n"
+        f"🔗 交易: {_tx_link(tx_hash)}"
     )
     return msg, defi_tx_key(tx)
 
@@ -207,12 +218,14 @@ def check_exchange_deposit(
         return None, ex_deposit_key(tx)
     tx_hash = tx.get("hash", "")
     msg = (
-        f"\U0001f3e6 <b>Exchange Deposit</b>\n"
-        f"Whale: <code>{_esc(whale_label)}</code> → {_esc(ex_info.get('name', 'Exchange'))}\n"
-        f"Value: {value_native:.4f} {_esc(config.NATIVE_SYMBOL)}\n"
-        f"From: {_addr_label(tx.get('from', '???'), exchanges)}\n"
-        f"To: {_addr_label(tx.get('to', '???'), exchanges)}\n"
-        f"TX: {_tx_link(tx_hash)}"
+        f"🏦 <b>疑似充值交易所</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🐋 巨鲸: <code>{_esc(whale_label)}</code>\n"
+        f"➡️ 目标: <b>{_esc(ex_info.get('name', '交易所'))}</b>\n"
+        f"💰 金额: <b>{_format_value(value_native)} {_esc(config.NATIVE_SYMBOL)}</b>\n"
+        f"📤 发送: {_addr_label(tx.get('from', '???'), exchanges)}\n"
+        f"📥 接收: {_addr_label(tx.get('to', '???'), exchanges)}\n"
+        f"🔗 交易: {_tx_link(tx_hash)}"
     )
     return msg, ex_deposit_key(tx)
 
@@ -233,11 +246,13 @@ def check_exchange_withdrawal(
         return None, ex_withdraw_key(tx)
     tx_hash = tx.get("hash", "")
     msg = (
-        f"\U0001f4b3 <b>Exchange Withdrawal</b>\n"
-        f"{_esc(ex_info.get('name', 'Exchange'))} → <code>{_esc(whale_label)}</code>\n"
-        f"Value: {value_native:.4f} {_esc(config.NATIVE_SYMBOL)}\n"
-        f"From: {_addr_label(tx.get('from', '???'), exchanges)}\n"
-        f"To: {_addr_label(tx.get('to', '???'), exchanges)}\n"
-        f"TX: {_tx_link(tx_hash)}"
+        f"🏧 <b>疑似交易所提币</b>\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"🏦 来源: <b>{_esc(ex_info.get('name', '交易所'))}</b>\n"
+        f"🐋 巨鲸: <code>{_esc(whale_label)}</code>\n"
+        f"💰 金额: <b>{_format_value(value_native)} {_esc(config.NATIVE_SYMBOL)}</b>\n"
+        f"📤 发送: {_addr_label(tx.get('from', '???'), exchanges)}\n"
+        f"📥 接收: {_addr_label(tx.get('to', '???'), exchanges)}\n"
+        f"🔗 交易: {_tx_link(tx_hash)}"
     )
     return msg, ex_withdraw_key(tx)
