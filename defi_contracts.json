@@ -1,0 +1,34 @@
+{
+    "0x7a250d5630b4cf539739df2c5dacb4c659f2488d": {
+        "name": "Uniswap V2 Router",
+        "type": "DEX"
+    },
+    "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45": {
+        "name": "Uniswap V3 Router",
+        "type": "DEX"
+    },
+    "0xe592427a0aece92de3edee1f18e0157c05861564": {
+        "name": "Uniswap V3 SwapRouter",
+        "type": "DEX"
+    },
+    "0xd9e1ce17f2641f24ae83637ab66a2cca9c378b9f": {
+        "name": "SushiSwap Router",
+        "type": "DEX"
+    },
+    "0xa5409ec958c83c3f309868babaca7c86dcb077c1": {
+        "name": "1inch V3",
+        "type": "DEX Aggregator"
+    },
+    "0x1111111254eeb25477b68fb85ed929f73a960582": {
+        "name": "1inch V4",
+        "type": "DEX Aggregator"
+    },
+    "0xdef1c0ded9bec7f1a1670819833240f027b25eff": {
+        "name": "0x Protocol",
+        "type": "DEX Aggregator"
+    },
+    "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": {
+        "name": "Uniswap Universal Router",
+        "type": "DEX"
+    }
+}
