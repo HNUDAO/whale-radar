@@ -7,7 +7,10 @@ import config
 logger = logging.getLogger(__name__)
 
 _last_call = 0.0
-_MIN_INTERVAL = 0.25  # respect free-tier rate limit (5 req/s)
+_MIN_INTERVAL = 0.25
+
+_DEFAULT_OFFSET = 100
+_MAX_PAGES = 20
 
 
 def _masked_key(key: str) -> str:
@@ -30,15 +33,45 @@ def _call(params: dict) -> dict:
     params["chainid"] = config.CHAIN_ID
     logger.debug(
         "Etherscan call module=%s action=%s key=%s",
-        params.get("module"),
-        params.get("action"),
+        params.get("module"), params.get("action"),
         _masked_key(config.ETHERSCAN_API_KEY),
     )
-    resp = requests.get(config.ETHERSCAN_BASE_URL, params=params, timeout=30)
-    resp.raise_for_status()
+    try:
+        resp = requests.get(config.ETHERSCAN_BASE_URL, params=params, timeout=30)
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        if resp.status_code == 429:
+            logger.error("Etherscan rate limit hit")
+        elif resp.status_code == 401 or resp.status_code == 403:
+            logger.error("Etherscan auth error (invalid API key?)")
+        else:
+            logger.error("Etherscan HTTP error: %s", e)
+        raise
+    except requests.RequestException as e:
+        logger.error("Etherscan request failed: %s", e)
+        raise
+
     data = resp.json()
-    if data.get("status") != "1" and data.get("message") != "No transactions found":
-        logger.warning("Etherscan warning: %s", data.get("result", ""))
+    status = data.get("status", "")
+    message = data.get("message", "")
+    result = data.get("result", "")
+
+    if status == "1":
+        return data
+
+    if "No transactions found" in message or "No transactions found" in str(result):
+        return data
+
+    if "rate limit" in str(result).lower() or "Max rate" in str(result):
+        logger.error("Etherscan rate limit: %s", result)
+        raise RuntimeError(f"Etherscan rate limit: {result}")
+
+    if "Invalid API Key" in str(result):
+        logger.error("Etherscan invalid API key")
+        raise RuntimeError("Etherscan invalid API key")
+
+    logger.warning("Etherscan unexpected response: status=%s message=%s result=%s",
+                   status, message, str(result)[:200])
     return data
 
 
@@ -49,22 +82,42 @@ def get_latest_block() -> int:
 
 
 def get_txlist(address: str, start_block: int) -> list[dict]:
-    data = _call({
-        "module": "account",
-        "action": "txlist",
-        "address": address,
-        "startblock": start_block,
-        "sort": "asc",
-    })
-    return data.get("result") if isinstance(data.get("result"), list) else []
+    all_txs: list[dict] = []
+    for page in range(1, _MAX_PAGES + 1):
+        data = _call({
+            "module": "account",
+            "action": "txlist",
+            "address": address,
+            "startblock": start_block,
+            "page": page,
+            "offset": _DEFAULT_OFFSET,
+            "sort": "asc",
+        })
+        result = data.get("result")
+        if not isinstance(result, list):
+            break
+        all_txs.extend(result)
+        if len(result) < _DEFAULT_OFFSET:
+            break
+    return all_txs
 
 
 def get_tokentx(address: str, start_block: int) -> list[dict]:
-    data = _call({
-        "module": "account",
-        "action": "tokentx",
-        "address": address,
-        "startblock": start_block,
-        "sort": "asc",
-    })
-    return data.get("result") if isinstance(data.get("result"), list) else []
+    all_txs: list[dict] = []
+    for page in range(1, _MAX_PAGES + 1):
+        data = _call({
+            "module": "account",
+            "action": "tokentx",
+            "address": address,
+            "startblock": start_block,
+            "page": page,
+            "offset": _DEFAULT_OFFSET,
+            "sort": "asc",
+        })
+        result = data.get("result")
+        if not isinstance(result, list):
+            break
+        all_txs.extend(result)
+        if len(result) < _DEFAULT_OFFSET:
+            break
+    return all_txs

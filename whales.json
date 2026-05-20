@@ -1,4 +1,14 @@
 {
-    "0x28142C3E068e27E82e4E885F0acb2DE5982F2818": "Whale Alpha",
-    "0x5aAeb6053F3E94C9b9A09f33669435E7Ef1BeAed": "Whale Beta"
+  "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8": "Binance 7 / Cold Wallet",
+  "0x40b38765696e3d5d8d9d834d8aad4bb6e418e489": "Robinhood",
+  "0x0e58e8993100f1cbe45376c410f97f4893d9bfcd": "Upbit 41",
+  "0xafcd96e580138cfa2332c632e66308eacd45c5da": "Gemini Cold Wallet",
+  "0xe92d1a43df510f82c66382592a047d288f85226f": "Bitfinex 19 / Cold Wallet",
+  "0x9f1799fb47b1514f453bcebbc37ecfe883756e83": "Kraken Cold Wallet 4",
+  "0x8103683202aa8da10536036edef04cdd865c225e": "Bitfinex 20",
+  "0x8d05d9924fe935bd533a844271a1b2078eae6fcf": "Kraken Cold Wallet 3",
+  "0x2b6ed29a95753c3ad948348e3e7b1a251080ffb9": "Rain Lohmus",
+  "0x220866b1a2219f40e72f5c628b65d54268ca3a9d": "Vb 3 / Safe Smart Account",
+  "0xc61b9bb3a7a0767e3179713f3a5c7a9aedce193c": "Bitfinex MultiSig 2",
+  "0xb61a16bda6d61d9b8ad493bf05962c5b98d1712f": "Deribit / Coinbase Prime Custody"
 }

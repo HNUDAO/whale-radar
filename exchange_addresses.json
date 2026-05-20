@@ -1,9 +1,54 @@
 {
-    "addresses": [
-        "0x28c6c06298d514db089934071355e5743bf21d60",
-        "0x21a31ee1afc51d94c2efccaa2092ad1028285549",
-        "0xdfd5293d8e347dfe59e90efd55b2956a1343963d",
-        "0x56eddb7aa87536c09cc2734e6520a8ec2c5c8df0",
-        "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8"
-    ]
+  "0x28c6c06298d514db089934071355e5743bf21d60": {
+    "name": "Binance 14",
+    "type": "exchange-hot-wallet"
+  },
+  "0xf977814e90da44bfa03b6295a0616a897441acec": {
+    "name": "Binance Hot Wallet 20",
+    "type": "exchange-hot-wallet"
+  },
+  "0x47ac0fb4f2d84898e4d9e7b4dab3c24507a6d503": {
+    "name": "Binance Peg Tokens",
+    "type": "exchange-custody"
+  },
+  "0xbe0eb53f46cd790cd13851d5eff43d12404d33e8": {
+    "name": "Binance 7",
+    "type": "exchange-cold-wallet"
+  },
+  "0x40b38765696e3d5d8d9d834d8aad4bb6e418e489": {
+    "name": "Robinhood",
+    "type": "exchange-custody"
+  },
+  "0x0e58e8993100f1cbe45376c410f97f4893d9bfcd": {
+    "name": "Upbit 41",
+    "type": "exchange-wallet"
+  },
+  "0xafcd96e580138cfa2332c632e66308eacd45c5da": {
+    "name": "Gemini Cold Wallet",
+    "type": "exchange-cold-wallet"
+  },
+  "0xe92d1a43df510f82c66382592a047d288f85226f": {
+    "name": "Bitfinex 19",
+    "type": "exchange-cold-wallet"
+  },
+  "0x9f1799fb47b1514f453bcebbc37ecfe883756e83": {
+    "name": "Kraken Cold Wallet 4",
+    "type": "exchange-cold-wallet"
+  },
+  "0x8103683202aa8da10536036edef04cdd865c225e": {
+    "name": "Bitfinex 20",
+    "type": "exchange-wallet"
+  },
+  "0x8d05d9924fe935bd533a844271a1b2078eae6fcf": {
+    "name": "Kraken Cold Wallet 3",
+    "type": "exchange-cold-wallet"
+  },
+  "0xc61b9bb3a7a0767e3179713f3a5c7a9aedce193c": {
+    "name": "Bitfinex MultiSig 2",
+    "type": "exchange-multisig"
+  },
+  "0xb61a16bda6d61d9b8ad493bf05962c5b98d1712f": {
+    "name": "Deribit / Coinbase Prime Custody",
+    "type": "custody"
+  }
 }
