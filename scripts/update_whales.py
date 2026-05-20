@@ -5,8 +5,6 @@ Usage:
     ETHERSCAN_API_KEY=xxx python scripts/update_whales.py
 
 NOTE: The Etherscan "tokenholder" API requires a PRO plan.
-If you get a "Account API rate limit reached" or "Missing/Invalid API Key"
-error, your plan does not support this endpoint.
 This script does NOT affect the main whale-radar program.
 """
 import json
@@ -18,10 +16,10 @@ import requests
 API_KEY = os.environ.get("ETHERSCAN_API_KEY", "")
 BASE_URL = os.environ.get("ETHERSCAN_BASE_URL", "https://api.etherscan.io/v2/api")
 CHAIN_ID = int(os.environ.get("CHAIN_ID", "1"))
-WHALES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "whales.json")
+WHALES_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "data", "whales.json"
+)
 TOP_N = int(os.environ.get("TOP_N", "10"))
-
-# ETH contract address for top holder query
 ETH_CONTRACT = "0x0000000000000000000000000000000000000000"
 
 
@@ -55,7 +53,7 @@ def main():
         print(f"Etherscan error: {result}")
         if "rate limit" in result.lower() or "pro" in result.lower():
             print("NOTE: The tokenholder endpoint requires an Etherscan PRO plan.")
-            print("You can manually edit whales.json instead.")
+            print("You can manually edit data/whales.json instead.")
         sys.exit(1)
 
     holders = data.get("result", [])

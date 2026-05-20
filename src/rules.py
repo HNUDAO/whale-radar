@@ -7,11 +7,11 @@ import config
 
 logger = logging.getLogger(__name__)
 
-_BASE = os.path.dirname(os.path.abspath(__file__))
-WHALES_FILE = os.path.join(_BASE, "whales.json")
-DEFI_FILE = os.path.join(_BASE, "defi_contracts.json")
-EXCHANGE_FILE = os.path.join(_BASE, "exchange_addresses.json")
-TOKEN_THRESHOLDS_FILE = os.path.join(_BASE, "token_thresholds.json")
+_DATA_DIR = os.path.join(config.PROJECT_ROOT, "data")
+WHALES_FILE = os.path.join(_DATA_DIR, "whales.json")
+DEFI_FILE = os.path.join(_DATA_DIR, "defi_contracts.json")
+EXCHANGE_FILE = os.path.join(_DATA_DIR, "exchange_addresses.json")
+TOKEN_THRESHOLDS_FILE = os.path.join(_DATA_DIR, "token_thresholds.json")
 
 
 # ---------------------------------------------------------------------------

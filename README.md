@@ -2,15 +2,40 @@
 
 巨鲸异动雷达 — 监控链上地址，大额转账 / DeFi 交互 / 交易所充提，通过 Telegram 推送。
 
+## 项目结构
+
+```
+whale-radar/
+├── src/                  # Python 源码
+│   ├── main.py
+│   ├── config.py
+│   ├── etherscan_client.py
+│   ├── telegram_client.py
+│   ├── rules.py
+│   └── storage.py
+├── data/                 # JSON 配置
+│   ├── whales.json
+│   ├── defi_contracts.json
+│   ├── exchange_addresses.json
+│   └── token_thresholds.json
+├── scripts/              # 辅助脚本
+│   └── update_whales.py
+├── Procfile
+├── requirements.txt
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
 ## 快速开始
 
 ```bash
 python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env          # 填入真实值
-python main.py --show-config  # 确认配置
-python main.py --test-telegram  # 测试 Telegram
-python main.py                # 正式运行
+python src/main.py --show-config
+python src/main.py --test-telegram
+python src/main.py
 ```
 
 程序自动读取 `.env`，无需手动 export 或安装 python-dotenv。
@@ -53,7 +78,7 @@ python main.py                # 正式运行
 ## Railway 部署
 
 1. 创建项目，关联 `HNUDAO/whale-radar`
-2. Service Type 选 **Worker**（Procfile 已配 `worker: python main.py`）
+2. Service Type 选 **Worker**（Procfile 已配 `worker: python src/main.py`）
 3. Variables 添加 3 个必填 + `DATA_DIR=/app/data`
 4. Volume 挂载到 `/app/data`
 
@@ -71,10 +96,12 @@ python main.py                # 正式运行
 
 ## 配置文件
 
+`data/` 目录下：
+
 | 文件 | 说明 |
 |------|------|
 | `whales.json` | 监控地址（手动维护，不放高频热钱包） |
-| `exchange_addresses.json` | 交易所地址（`{addr: {name, type}}`，也兼容 `{addresses: [...]}`） |
+| `exchange_addresses.json` | 交易所地址（`{addr: {name, type}}`，兼容 `{addresses: [...]}`） |
 | `defi_contracts.json` | DeFi 合约（支持按 chain_id 分组） |
 | `token_thresholds.json` | 按 token 设置阈值（如 `USDT: 100000`），覆盖全局 `ERC20_THRESHOLD` |
 

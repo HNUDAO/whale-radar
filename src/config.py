@@ -3,8 +3,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # --- Auto-load .env without python-dotenv ---
-_env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+_env_path = os.path.join(PROJECT_ROOT, ".env")
 if os.path.isfile(_env_path):
     with open(_env_path, encoding="utf-8") as _f:
         for _line in _f:
