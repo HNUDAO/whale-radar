@@ -7,7 +7,7 @@ import config
 logger = logging.getLogger(__name__)
 
 _last_call = 0.0
-_MIN_INTERVAL = 0.35
+_MIN_INTERVAL = 0.5
 _MAX_RETRIES = 3
 _RETRY_BACKOFF = 2.0
 
