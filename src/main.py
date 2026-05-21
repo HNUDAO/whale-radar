@@ -149,9 +149,8 @@ def main():
     storage.init_db()
 
     if args.test_telegram:
-        telegram_client.send_test()
-        logger.info("Test message sent, exiting")
-        return
+        ok = telegram_client.send_test()
+        return 0 if ok else 1
 
     dry_once = args.dry_run_once
     if not dry_once:

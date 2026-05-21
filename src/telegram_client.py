@@ -14,10 +14,10 @@ def _masked_token(token: str) -> str:
     return token[:4] + "..." + token[-4:]
 
 
-def send_message(text: str):
+def send_message(text: str) -> bool:
     if config.DRY_RUN:
         logger.info("[DRY_RUN] Telegram message:\n%s", text)
-        return
+        return True
 
     url = f"{_API}/bot{config.TELEGRAM_BOT_TOKEN}/sendMessage"
     payload = {
@@ -30,11 +30,20 @@ def send_message(text: str):
         resp = requests.post(url, json=payload, timeout=30)
         resp.raise_for_status()
         logger.info("Telegram message sent ok")
+        return True
+    except requests.exceptions.HTTPError as e:
+        status = e.response.status_code if e.response is not None else "?"
+        logger.error(
+            "Telegram send failed: HTTP %s, token=%s",
+            status, _masked_token(config.TELEGRAM_BOT_TOKEN),
+        )
+        return False
     except Exception:
-        logger.exception(
+        logger.error(
             "Telegram send failed, token=%s",
             _masked_token(config.TELEGRAM_BOT_TOKEN),
         )
+        return False
 
 
 def send_startup():
@@ -50,10 +59,15 @@ def send_startup():
     )
 
 
-def send_test():
-    send_message(
+def send_test() -> bool:
+    ok = send_message(
         f"🔧 <b>巨鲸雷达 连通测试</b>\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"📡 链: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
         f"✅ Telegram 连通正常"
     )
+    if ok:
+        logger.info("✅ 测试消息发送成功")
+    else:
+        logger.error("❌ 测试消息发送失败，请检查 TELEGRAM_BOT_TOKEN 和 TELEGRAM_CHAT_ID")
+    return ok
