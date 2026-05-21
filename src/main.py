@@ -209,6 +209,7 @@ def main():
                         storage.set_last_block(address, highest)
             except Exception:
                 logger.exception("Error processing %s (%s)", label, address)
+            time.sleep(0.5)
 
         time.sleep(config.POLL_INTERVAL)
 
