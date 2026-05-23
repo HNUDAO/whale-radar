@@ -85,6 +85,8 @@ def process_address(
     start_block = _init_block(address, latest_block) + 1
     max_block = 0
     writer = storage.BatchWriter()
+    native_count = 0
+    erc20_count = 0
 
     try:
         for tx in etherscan_client.get_txlist(address, start_block):
@@ -92,6 +94,8 @@ def process_address(
             block = int(tx.get("blockNumber", "0"))
             if block > max_block:
                 max_block = block
+
+            native_count += 1
 
             # Native transfer
             msg, key = rules.check_native_transfer(tx, label, exchanges)
@@ -123,6 +127,8 @@ def process_address(
             if block > max_block:
                 max_block = block
 
+            erc20_count += 1
+
             msg, key = rules.check_erc20_transfer(
                 tx, label, exchanges, token_thresholds
             )
@@ -136,6 +142,11 @@ def process_address(
 
     writer.commit()
     writer.close()
+    if native_count > 0 or erc20_count > 0:
+        logger.info(
+            "[%s] scanned %d native + %d ERC20 txs, block %d→%d",
+            label, native_count, erc20_count, start_block, max_block,
+        )
     return max_block
 
 

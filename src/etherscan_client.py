@@ -90,6 +90,10 @@ def _call(params: dict) -> dict:
             logger.error("Etherscan invalid API key")
             raise RuntimeError("Etherscan invalid API key")
 
+        # Proxy endpoints (eth_blockNumber etc.) return hex result without status field
+        if not status and isinstance(result, str) and result.startswith("0x"):
+            return data
+
         logger.warning("Etherscan unexpected response: status=%s message=%s result=%s",
                        status, message, str(result)[:200])
         return data
