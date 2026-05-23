@@ -6,8 +6,9 @@ import config
 
 logger = logging.getLogger(__name__)
 
-_last_call = 0.0
-_MIN_INTERVAL = 0.5
+_MAX_CALLS_PER_SEC = 2
+_CALL_WINDOW = 1.0
+_call_times: list[float] = []
 _MAX_RETRIES = 3
 _RETRY_BACKOFF = 2.0
 
@@ -22,11 +23,14 @@ def _masked_key(key: str) -> str:
 
 
 def _rate_limit():
-    global _last_call
-    elapsed = time.monotonic() - _last_call
-    if elapsed < _MIN_INTERVAL:
-        time.sleep(_MIN_INTERVAL - elapsed)
-    _last_call = time.monotonic()
+    global _call_times
+    now = time.monotonic()
+    _call_times = [t for t in _call_times if now - t < _CALL_WINDOW]
+    if len(_call_times) >= _MAX_CALLS_PER_SEC:
+        wait = _CALL_WINDOW - (now - _call_times[0]) + 0.05
+        if wait > 0:
+            time.sleep(wait)
+    _call_times.append(time.monotonic())
 
 
 def _is_rate_limited(result_str: str) -> bool:

@@ -1,6 +1,5 @@
 import argparse
 import logging
-import sys
 import time
 
 import config
@@ -136,12 +135,15 @@ def process_address(
                          writer, dry_once)
 
     except Exception:
-        writer.commit()
-        raise
-    finally:
+        try:
+            writer.commit()
+        except Exception:
+            pass
         writer.close()
+        raise
 
     writer.commit()
+    writer.close()
     if native_count > 0 or erc20_count > 0:
         logger.info(
             "[%s] scanned %d native + %d ERC20 txs, block %d→%d",
@@ -222,7 +224,7 @@ def main():
                         storage.set_last_block(address, highest)
             except Exception:
                 logger.exception("Error processing %s (%s)", label, address)
-            time.sleep(1.0)
+            time.sleep(1.5)
 
         time.sleep(config.POLL_INTERVAL)
 
