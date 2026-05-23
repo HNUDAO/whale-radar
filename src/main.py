@@ -137,11 +137,11 @@ def process_address(
 
     except Exception:
         writer.commit()
-        writer.close()
         raise
+    finally:
+        writer.close()
 
     writer.commit()
-    writer.close()
     if native_count > 0 or erc20_count > 0:
         logger.info(
             "[%s] scanned %d native + %d ERC20 txs, block %d→%d",
@@ -165,7 +165,9 @@ def main():
 
     dry_once = args.dry_run_once
     if not dry_once:
-        telegram_client.send_startup()
+        ok = telegram_client.send_startup()
+        if not ok:
+            logger.error("Startup message failed, check Telegram config")
 
     whales = rules.load_whales()
     defi_contracts = rules.load_defi_contracts()

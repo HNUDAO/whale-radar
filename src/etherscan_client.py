@@ -35,18 +35,17 @@ def _is_rate_limited(result_str: str) -> bool:
 
 
 def _call(params: dict) -> dict:
-    params["apikey"] = config.ETHERSCAN_API_KEY
-    params["chainid"] = config.CHAIN_ID
+    _params = {**params, "apikey": config.ETHERSCAN_API_KEY, "chainid": config.CHAIN_ID}
     logger.debug(
         "Etherscan call module=%s action=%s key=%s",
-        params.get("module"), params.get("action"),
+        _params.get("module"), _params.get("action"),
         _masked_key(config.ETHERSCAN_API_KEY),
     )
 
     for attempt in range(1, _MAX_RETRIES + 1):
         _rate_limit()
         try:
-            resp = requests.get(config.ETHERSCAN_BASE_URL, params=params, timeout=30)
+            resp = requests.get(config.ETHERSCAN_BASE_URL, params=_params, timeout=30)
             resp.raise_for_status()
         except requests.HTTPError as e:
             if resp.status_code == 429 and attempt < _MAX_RETRIES:
