@@ -46,9 +46,9 @@ def send_message(text: str) -> bool:
         return False
 
 
-def send_startup():
+def send_startup() -> bool:
     dry_tag = "  [测试模式]" if config.DRY_RUN else ""
-    send_message(
+    return send_message(
         f"🚀 <b>巨鲸雷达 Whale Radar</b>{dry_tag}\n"
         f"━━━━━━━━━━━━━━━━━━━━\n"
         f"📡 链: {config.CHAIN_NAME} ({config.CHAIN_ID})\n"
